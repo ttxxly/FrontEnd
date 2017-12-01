@@ -1,0 +1,54 @@
+<!--
+	作者：offline
+	时间：2017-11-24
+	描述：声明当前语言为HTML文本
+-->
+<!DOCTYPE html>
+<html>
+	<head>
+		<!-- 设置字符编码 -->
+		<meta charset="utf-8" />
+		<title>JavaScript 结合 HTML5 Canvas 开发推箱子游戏</title>
+		
+		<!-- CSS -->
+		<style type="text/css">
+			/* 解决浏览器差异 内外布局都设置为0 */
+			<!-- * 表示所有的元素 -->
+			* {
+				margin: 0;
+				padding: 0;
+			}
+			/* game start */
+			.game {
+				margin: 20px auto;
+				width: 560px;
+			}
+			/* 设置游戏说明文本显示 */
+			#msg {
+				position: absolute;
+				top: 20px;
+				left: 50px;
+				width: 320px;
+			}
+			/* game end */
+		</style>
+	</head>
+	<body>
+		<!-- game start -->
+		<div class="game">
+			<canvas id="canvas" width="560" height="560"></canvas>
+			<!-- 游戏关卡选择与其他操作 -->
+			<input type="button" value="上一关" />
+			<input type="button" value="下一关" />
+			<input type="button" value="冲完本关" />
+			<input type="button" value="游戏说明" />
+			<!-- 游戏说明文本显示区域-->
+			<div id="msg">游戏wenb</div>
+		</div>
+		<!-- game end -->
+		
+		<script type="text/javascript">
+			
+		</script>
+	</body>
+</html>
