@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>贪吃蛇游戏</title>
+	</head>
+	<body>
+		<!--
+        	作者：1952500855@qq.com
+        	时间：2018-01-06
+        	编程思维：将现实生活中的事物或者说是需求如何变成代码。
+        	第一部分：
+        		1.绘制出一个表格，蛇是一节一节的（火车的组成）
+        		每一个格子15个长度，30个格子（游戏面板大小 450 * 450）
+        		2.第一行绘制出一条蛇（初始长度为6，占6个单元格）
+        		3.在游戏面板中画出一个事物
+        	第二部分：
+        		1.蛇头随着键盘上下左右调整方向，并且可以移动
+        		2.让蛇的身体跟着蛇头一起运动
+        	第三部分：
+        		1.蛇吃到了食物
+        		2.蛇自动增长
+        		3.产生一个新的食物（位置随机出现）
+        	终章：
+        		完善游戏规则，自动运动，游戏结束的标志、计分、难度级别
+        -->
+        <canvas id="game" width="450" height="450"style="
+        	border: 1px solid red;margin: 30px auto; display: block;"></canvas>
+        	<script type="text/javascript">
+        		var canvas = document.getElementById("game");
+        		//拿到上下文，画图工具
+        		var cxt = canvas.getContext("2d");
+        		//每个格子的宽度
+        		var width = 15;
+        		//画格子
+//      		for(var i=0; i<30; i++){
+//      			//设置画笔颜色
+//      			cxt.strokeStyle = "RED";
+//      			//画横线
+//      			//开始和结束
+//      			cxt.beginPath();
+//      			//移动到起点
+//      			cxt.moveTo(0, i * width);
+//      			cxt.lineTo(450, i * width);
+//      			cxt.closePath();
+//      			//将路径画制到面板
+//      			cxt.stroke();
+//      			//画竖线
+//      			cxt.beginPath();
+//      			//移动到起点
+//      			cxt.moveTo(i * width, 0);
+//      			cxt.lineTo(i * width, 450);
+//      			cxt.closePath();
+//      			//将路径画制到面板
+//      			cxt.stroke();
+//      		}
+        		//面向对象， 蛇的身体是一节一节的
+				/*
+				 * 定义一个cell 类， 
+				 * x 和 y 代表格子的坐标
+				 * f 代表的是方向
+				 * 1代表左边 -1代表右边		需要判断相反方向，蛇是不能掉头的
+				 * 2代表上边 -2代表下边
+				 */
+        		function Cell(x, y, f) {
+        			this.x = x;
+        			this.y = y;
+        			this.f = f;
+        		}
+        		function Food(x, y){
+        			this.x = x;
+        			this.y = y;
+        		}
+        		//蛇的对象， 蛇是由cell组成
+        		var snake = [];
+        		var length = 6;	//蛇的初始长度
+        		var speed = 100;//100毫秒移动一个单元格	
+        		var food = new Food(15, 15);
+        		//初始化蛇的身体
+        		for(var i=0; i<length; i++){
+        			snake[i] = new Cell(i, 0, -1);
+        		}
+    			
+    			//怎么让蛇头跟着键盘动，监听键盘事件
+		document.onkeydown = function(e){
+			var code = e.keyCode;
+			var fangxiang = 0;//方向
+			switch(code){
+				case 37:fangxiang = 1;break;
+				case 38:fangxiang = 2;break;
+				case 39:fangxiang = -1;break;
+				case 40:fangxiang = -2;break;
+				case 87:fangxiang = 2;break;
+				case 65:fangxiang = 1;break;
+				case 83:fangxiang = -2;break;
+				case 68:fangxiang = -1;break;
+			}
+			var  head = snake[snake.length-1];
+			if(fangxiang!=0&&(head.f+fangxiang)!=0){
+				//调用蛇的移动方法
+				moveSnake(fangxiang);
+			}
+		}
+		/*
+			按照方向移动蛇
+		*/
+		function moveSnake(direction){
+			var head = snake[snake.length-1];//拿到蛇头
+			if(!direction){
+				direction = head.f;
+			}
+			var newSnake = [];//新的临时的蛇的身体
+			//复制一个蛇头
+			var newHead = new Cell(head.x,head.y,head.f);
+			//将尾巴丢掉,把剩下的放到新的数组
+			for(var i = 1;i<snake.length;i++){
+				newSnake[i-1] = snake[i];
+			}
+			newHead.f = direction;
+			//修改 x 和 y x代表水平方向 y代表垂直方向
+			switch(direction){
+				case 1:newHead.x--;break;
+				case 2:newHead.y--;break;
+				case -1:newHead.x++;break;
+				case -2:newHead.y++;break;
+			}
+			newSnake[newSnake.length] = newHead;
+			snake = newSnake;
+			gameOver();
+			draw();
+		}
+		function gameOver(){
+			var head = snake[snake.length-1];
+			//检测装到游戏的边间
+			if(head.x>=30 ||head.y>=30 ||head.x<0||head.y<0){
+				alert("撞墙");
+				window.location.reload();
+			}
+			//不能咬到自己
+			for(var i = 0 ; i < snake.length-1;i++){
+				if(snake[i].x == head.x && snake[i].y == head.y){
+					alert("Oh 买噶！太血腥了！");
+				window.location.reload();
+				}
+			}
+		}
+		draw();
+		function draw(){
+			cxt.clearRect(0,0,450,450);
+			cxt.fillStyle = "green";//设置填充的颜色
+			cxt.beginPath();
+				//cxt.rect(x,y,width,height);正方形宽高是一样的
+			cxt.rect(food.x*width,food.y*width,width,width);//rect是矩形
+			cxt.closePath();
+				//将动作绘制到面板
+			cxt.fill();
+			//判断蛇的蛇头是不是跟食物坐标重叠
+			var  head = snake[snake.length-1];
+			if(head.x==food.x && head.y == food.y){
+				var audio = document.createElement("audio");
+				audio.src="sx.mp3";
+				audio.play();
+				var newHead = new Cell(head.x,head.y,head.f);
+				//修改 x 和 y x代表水平方向 y代表垂直方向
+				switch(newHead.f){
+					case 1:newHead.x--;break;
+					case 2:newHead.y--;break;
+					case -1:newHead.x++;break;
+					case -2:newHead.y++;break;
+				}
+				snake[snake.length] = newHead;
+				randFood();
+			}
+			//如何绘制蛇的身体到面板上
+			for(var i = 0 ; i < snake.length;i++){
+				var cell = snake[i];//拿到每一节蛇的身体
+				cxt.fillStyle = "gray";//设置填充的颜色
+				if(i==snake.length-1){
+					cxt.fillStyle= "red";
+				}
+				cxt.beginPath();
+				//cxt.rect(x,y,width,height);正方形宽高是一样的
+				cxt.rect(cell.x*width,cell.y*width,width,width);//rect是矩形
+				cxt.closePath();
+				//将动作绘制到面板
+				cxt.fill();
+			}
+			
+		}
+		function randFood(){
+			food.x = Math.ceil(Math.random()*28)+1;
+			food.y = Math.ceil(Math.random()*28)+1;
+
+		}
+		//setTimeout setINterval
+		var autoRun = setInterval(moveSnake,speed);
+        	</script>
+	</body>
+</html>
