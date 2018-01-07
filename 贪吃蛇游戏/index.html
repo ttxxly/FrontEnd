@@ -82,7 +82,7 @@
         		}
     			
     			//怎么让蛇头跟着键盘动，监听键盘事件
-		document.onkeydown = function(e){
+			document.onkeydown = function(e){
 			var code = e.keyCode;
 			var fangxiang = 0;//方向
 			switch(code){
@@ -131,7 +131,7 @@
 		}
 		function gameOver(){
 			var head = snake[snake.length-1];
-			//检测装到游戏的边间
+			//检测边界
 			if(head.x>=30 ||head.y>=30 ||head.x<0||head.y<0){
 				alert("撞墙");
 				window.location.reload();
@@ -192,8 +192,9 @@
 			food.y = Math.ceil(Math.random()*28)+1;
 
 		}
-		//setTimeout setINterval
-		var autoRun = setInterval(moveSnake,speed);
+		//setTimeout setINterval 
+		//setInterval() 方法可按照指定的周期（以毫秒计）来调用函数或计算表达式。
+		var autoRun = setInterval(moveSnake,speed);//每100毫秒调用一次moveSnake
         	</script>
 	</body>
 </html>
